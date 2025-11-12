@@ -100,7 +100,7 @@ Pull requests are welcome! Feel free to improve the song database or add new fea
 
 ## 👨‍💻 Author
 
-**CHACHA0044**
+**PRANAV , SAHIM , NUMAN**
 
 ---
 

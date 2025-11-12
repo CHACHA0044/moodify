@@ -1,5 +1,5 @@
 flask==3.0.0
-flask-cors==4.0.0
+flask-cors>=4.0.1
 deepface==0.0.93
 transformers==4.40.0
 opencv-python-headless==4.10.0.84
