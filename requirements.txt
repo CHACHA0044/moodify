@@ -1,8 +1,10 @@
 flask==3.0.0
 flask-cors==4.0.0
 deepface==0.0.79
-transformers==4.35.0
-opencv-python-headless==4.8.1.78
+transformers>=4.40.0
+opencv-python-headless==4.10.0.84
 pandas>=2.2.0
 numpy>=1.26.0
 gunicorn==21.2.0
+torch>=2.0.0
+pillow>=10.0.0
