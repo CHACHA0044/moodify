@@ -18,9 +18,17 @@ import base64
 import numpy as np
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
 
-# Keyword-based emotion detection for text (no ML model needed)
+# Enable CORS for all routes and origins
+CORS(app, resources={
+    r"/*": {
+        "origins": "*",
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type"]
+    }
+})
+
+# Keyword-based emotion detection for text
 EMOTION_KEYWORDS = {
     'happy': ['happy', 'joy', 'joyful', 'excited', 'great', 'wonderful', 'amazing', 'fantastic', 'good', 'excellent', 'love', 'loving', 'cheerful', 'delighted', 'pleased', 'glad'],
     'sad': ['sad', 'depressed', 'down', 'unhappy', 'miserable', 'crying', 'upset', 'heartbroken', 'disappointed', 'lonely', 'blue', 'melancholy'],
@@ -44,18 +52,7 @@ def detect_text_emotion(text):
     
     if emotion_scores:
         detected = max(emotion_scores, key=emotion_scores.get)
-        # Map some emotions for consistency with songs database
-        emotion_mapping = {
-            'happy': 'happy',
-            'sad': 'sad',
-            'angry': 'angry',
-            'fear': 'fear',
-            'surprise': 'surprise',
-            'disgust': 'disgust',
-            'love': 'love',
-            'neutral': 'neutral'
-        }
-        return emotion_mapping.get(detected, 'neutral')
+        return detected
     
     return 'neutral'
 
@@ -63,8 +60,16 @@ def detect_text_emotion(text):
 def home():
     return jsonify({"message": "Moodify API is running!", "status": "ok"})
 
-@app.route("/text", methods=["POST"])
+@app.route("/text", methods=["POST", "OPTIONS"])
 def text_emotion():
+    # Handle preflight request
+    if request.method == "OPTIONS":
+        response = jsonify({"status": "ok"})
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        response.headers.add("Access-Control-Allow-Methods", "POST")
+        return response
+    
     try:
         data = request.get_json()
         text = data.get("text", "")
@@ -73,13 +78,23 @@ def text_emotion():
             return jsonify({"error": "Text not provided"}), 400
         
         emotion = detect_text_emotion(text)
-        return jsonify({"emotion": emotion, "score": 0.95})
+        response = jsonify({"emotion": emotion, "score": 0.95})
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
     
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@app.route("/webcam", methods=["POST"])
+@app.route("/webcam", methods=["POST", "OPTIONS"])
 def webcam_emotion():
+    # Handle preflight request
+    if request.method == "OPTIONS":
+        response = jsonify({"status": "ok"})
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
+        response.headers.add("Access-Control-Allow-Methods", "POST")
+        return response
+    
     try:
         data = request.get_json()
         img_data = data.get("image")
@@ -96,7 +111,9 @@ def webcam_emotion():
         result = DeepFace.analyze(img_path=img, actions=['emotion'], enforce_detection=False)
         dominant = result[0]['dominant_emotion']
         
-        return jsonify({"emotion": dominant})
+        response = jsonify({"emotion": dominant})
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response
     
     except Exception as e:
         return jsonify({"error": str(e)}), 500
