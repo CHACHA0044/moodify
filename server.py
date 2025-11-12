@@ -18,7 +18,7 @@ import base64
 import numpy as np
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Keyword-based emotion detection for text (no ML model needed)
 EMOTION_KEYWORDS = {
