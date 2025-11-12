@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moodify - Your Mood, Your Music</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            width: 100%;
+            padding: 40px;
+            animation: fadeIn 0.8s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            font-size: 3em;
+            margin-bottom: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .mode-selector {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .mode-btn {
+            flex: 1;
+            min-width: 200px;
+            padding: 20px;
+            border: 3px solid #667eea;
+            background: white;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .mode-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .mode-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .input-section {
+            display: none;
+            animation: slideIn 0.5s ease-in;
+        }
+
+        .input-section.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .text-input-container {
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1em;
+            resize: vertical;
+            min-height: 100px;
+            transition: border 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .camera-container {
+            position: relative;
+            background: #000;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        video {
+            width: 100%;
+            display: block;
+            border-radius: 15px;
+        }
+
+        .camera-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-size: 1.2em;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .action-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .results {
+            margin-top: 30px;
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .results.show {
+            display: block;
+        }
+
+        .emotion-display {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            animation: bounceIn 0.6s ease-in;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+
+        .emotion-display h2 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .songs-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .song-card {
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 15px;
+            padding: 20px;
+            transition: all 0.3s;
+            cursor: pointer;
+            animation: fadeInUp 0.6s ease-in;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .song-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .song-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .song-card p {
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .spotify-btn {
+            background: #1DB954;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .spotify-btn:hover {
+            background: #1ed760;
+            transform: scale(1.05);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #ff6b6b;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .error.show {
+            display: block;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .mode-btn {
+                min-width: 150px;
+                padding: 15px;
+            }
+
+            .songs-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🎵</div>
+            <h1>Moodify</h1>
+            <p class="subtitle">Discover music that matches your mood</p>
+        </div>
+
+        <div class="mode-selector">
+            <button class="mode-btn" onclick="selectMode('camera')">
+                📷 Camera Mode
+            </button>
+            <button class="mode-btn" onclick="selectMode('text')">
+                ✍️ Text Mode
+            </button>
+        </div>
+
+        <!-- Camera Mode -->
+        <div id="camera-section" class="input-section">
+            <div class="camera-container">
+                <video id="video" autoplay playsinline></video>
+                <div id="camera-overlay" class="camera-overlay">
+                    Click "Start Camera" to begin
+                </div>
+            </div>
+            <div class="btn-container">
+                <button class="action-btn" onclick="startCamera()">Start Camera</button>
+                <button class="action-btn" onclick="captureEmotion()" id="capture-btn" disabled>Capture Emotion</button>
+            </div>
+        </div>
+
+        <!-- Text Mode -->
+        <div id="text-section" class="input-section">
+            <div class="text-input-container">
+                <textarea id="text-input" placeholder="Tell me how you're feeling... (e.g., 'I'm feeling happy today!' or 'I'm so sad right now')"></textarea>
+            </div>
+            <div class="btn-container">
+                <button class="action-btn" onclick="analyzeText()">Analyze Emotion</button>
+            </div>
+        </div>
+
+        <!-- Loading -->
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Analyzing your emotion...</p>
+        </div>
+
+        <!-- Error -->
+        <div id="error" class="error"></div>
+
+        <!-- Results -->
+        <div id="results" class="results">
+            <div class="emotion-display">
+                <h2>Your Emotion: <span id="detected-emotion"></span></h2>
+                <p>Here are some songs to match your mood!</p>
+            </div>
+            <div id="songs-container" class="songs-container"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8000'; // Change this to your deployed backend URL
+        let stream = null;
+        let cameraStarted = false;
+
+        const songs = {
+            happy: [
+                {name: "Can't Stop the Feeling!", artist: "Justin Timberlake", link: "https://open.spotify.com/track/6JV2JOEocMgcZxYSZelKcc"},
+                {name: "Happy", artist: "Pharrell Williams", link: "https://open.spotify.com/track/60nZcImufyMA1MKQY3dcCH"},
+                {name: "Good as Hell", artist: "Lizzo", link: "https://open.spotify.com/track/6KgBpzTuTRPebChN0VTyzV"},
+                {name: "Walking on Sunshine", artist: "Katrina and the Waves", link: "https://open.spotify.com/track/05wIrZSwuaVWhcv5FfqeH0"},
+                {name: "Don't Stop Me Now", artist: "Queen", link: "https://open.spotify.com/track/7hQJA50XrCWABAu5v6QZ4i"}
+            ],
+            joy: [
+                {name: "Good Vibrations", artist: "The Beach Boys", link: "https://open.spotify.com/track/54RhcBw2hOdFaDmFJQAWAL"},
+                {name: "Celebration", artist: "Kool & The Gang", link: "https://open.spotify.com/track/1KOwMumaYuiUZtsKx6yuLs"},
+                {name: "September", artist: "Earth Wind & Fire", link: "https://open.spotify.com/track/5nNmj1cLQ3EiYPYfeIhFEC"},
+                {name: "Uptown Funk", artist: "Bruno Mars", link: "https://open.spotify.com/track/32OlwWuMpZ6b0aN2RZOeMS"}
+            ],
+            sad: [
+                {name: "Someone Like You", artist: "Adele", link: "https://open.spotify.com/track/4kflIGfjdZJWvEiqrxPZcW"},
+                {name: "Fix You", artist: "Coldplay", link: "https://open.spotify.com/track/7LVHVU3tWfcxj5aiPFEW4Q"},
+                {name: "Let Her Go", artist: "Passenger", link: "https://open.spotify.com/track/2jG8XJ0AahBf1I3WX5Jr9A"},
+                {name: "Someone You Loved", artist: "Lewis Capaldi", link: "https://open.spotify.com/track/7qEHsqek33rTcFNT9PFqLf"}
+            ],
+            sadness: [
+                {name: "All Too Well", artist: "Taylor Swift", link: "https://open.spotify.com/track/5enxwA8aAbwZbf5qCHORXi"},
+                {name: "Skinny Love", artist: "Bon Iver", link: "https://open.spotify.com/track/01XJvvERP0JfHKLbEaFXmW"},
+                {name: "Mad World", artist: "Gary Jules", link: "https://open.spotify.com/track/3JOVTQ5h8HGFnDdp4VT3MP"}
+            ],
+            angry: [
+                {name: "In the End", artist: "Linkin Park", link: "https://open.spotify.com/track/60a0Rd6pjrkxjPbaKzXjfq"},
+                {name: "Lose Yourself", artist: "Eminem", link: "https://open.spotify.com/track/2GZbaAvmQk6xZ8Wv9zjYxO"},
+                {name: "Killing In The Name", artist: "Rage Against The Machine", link: "https://open.spotify.com/track/1jvApR4mAsGqqsMP5n5z7v"}
+            ],
+            anger: [
+                {name: "Seven Nation Army", artist: "The White Stripes", link: "https://open.spotify.com/track/3dPQuX8Gs42Y7b454ybpMR"},
+                {name: "Smells Like Teen Spirit", artist: "Nirvana", link: "https://open.spotify.com/track/4CeeEOM32jQcH3eN9Q2dGj"},
+                {name: "Chop Suey!", artist: "System of a Down", link: "https://open.spotify.com/track/2DlHlPMa4M17kufBvI2lEN"}
+            ],
+            fear: [
+                {name: "Demons", artist: "Imagine Dragons", link: "https://open.spotify.com/track/5qaEfEh1AtSdrdrByCP7qR"},
+                {name: "Bury a Friend", artist: "Billie Eilish", link: "https://open.spotify.com/track/4SSnFejRGlZikf02HLewEF"},
+                {name: "Radioactive", artist: "Imagine Dragons", link: "https://open.spotify.com/track/0C7zgv0rBkG7p1DYv9nEcD"}
+            ],
+            surprise: [
+                {name: "Firework", artist: "Katy Perry", link: "https://open.spotify.com/track/4lCv7b86sLynZbXhfScfm2"},
+                {name: "Wake Me Up", artist: "Avicii", link: "https://open.spotify.com/track/1y4eb6hmAvsqlDOl3fx9kk"},
+                {name: "On Top of the World", artist: "Imagine Dragons", link: "https://open.spotify.com/track/68Dni7IE4VyPkTOH9mRWHr"}
+            ],
+            disgust: [
+                {name: "Bad Guy", artist: "Billie Eilish", link: "https://open.spotify.com/track/2Fxmhks0bxGSBdJ92vM42m"},
+                {name: "Heathens", artist: "Twenty One Pilots", link: "https://open.spotify.com/track/6i0V12jOa3mr6uu4WYhUBr"},
+                {name: "Toxic", artist: "Britney Spears", link: "https://open.spotify.com/track/717TY4sfgObJWiGMVURAVb"}
+            ],
+            neutral: [
+                {name: "Blinding Lights", artist: "The Weeknd", link: "https://open.spotify.com/track/0VjIjW4GlUZAMYd2vXMi3b"},
+                {name: "Levitating", artist: "Dua Lipa", link: "https://open.spotify.com/track/463CkQjx2Zk1yXoBuierM9"},
+                {name: "Watermelon Sugar", artist: "Harry Styles", link: "https://open.spotify.com/track/6UelLqGlWMcVH1E5c4H7lY"}
+            ],
+            love: [
+                {name: "Perfect", artist: "Ed Sheeran", link: "https://open.spotify.com/track/0tgVpDi06FyKpA1z0VMD4v"},
+                {name: "All of Me", artist: "John Legend", link: "https://open.spotify.com/track/3U4isOIWM3VvDubwSI3y7a"},
+                {name: "A Thousand Years", artist: "Christina Perri", link: "https://open.spotify.com/track/6qSpB4XlWNGhhGQRXGb2F3"}
+            ]
+        };
+
+        function selectMode(mode) {
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.input-section').forEach(section => section.classList.remove('active'));
+            
+            if (mode === 'camera') {
+                document.getElementById('camera-section').classList.add('active');
+                event.target.classList.add('active');
+            } else {
+                document.getElementById('text-section').classList.add('active');
+                event.target.classList.add('active');
+            }
+            
+            hideResults();
+        }
+
+        async function startCamera() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: 'user',
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    } 
+                });
+                
+                const video = document.getElementById('video');
+                video.srcObject = stream;
+                
+                // Flip the video horizontally for mirror effect
+                video.style.transform = 'scaleX(-1)';
+                
+                document.getElementById('camera-overlay').classList.add('hidden');
+                document.getElementById('capture-btn').disabled = false;
+                cameraStarted = true;
+            } catch (err) {
+                showError('Could not access camera. Please grant camera permissions.');
+                console.error(err);
+            }
+        }
+
+        async function captureEmotion() {
+            if (!cameraStarted) return;
+            
+            showLoading();
+            hideResults();
+            
+            const video = document.getElementById('video');
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            
+            // Flip back to original orientation for processing
+            ctx.translate(canvas.width, 0);
+            ctx.scale(-1, 1);
+            ctx.drawImage(video, 0, 0);
+            
+            const imageData = canvas.toDataURL('image/jpeg');
+            
+            try {
+                const response = await fetch(`${API_URL}/webcam`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ image: imageData })
+                });
+                
+                const data = await response.json();
+                
+                if (data.emotion) {
+                    displayResults(data.emotion);
+                } else {
+                    showError('Could not detect emotion. Please try again.');
+                }
+            } catch (err) {
+                showError('Server connection error. Make sure your Flask server is running on port 8000.');
+                console.error(err);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function analyzeText() {
+            const text = document.getElementById('text-input').value.trim();
+            
+            if (!text) {
+                showError('Please enter some text describing how you feel.');
+                return;
+            }
+            
+            showLoading();
+            hideResults();
+            
+            try {
+                const response = await fetch(`${API_URL}/text`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text })
+                });
+                
+                const data = await response.json();
+                
+                if (data.emotion) {
+                    displayResults(data.emotion);
+                } else {
+                    showError('Could not analyze emotion. Please try again.');
+                }
+            } catch (err) {
+                showError('Server connection error. Make sure your Flask server is running on port 8000.');
+                console.error(err);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function displayResults(emotion) {
+            const emotionLower = emotion.toLowerCase();
+            const emotionSongs = songs[emotionLower] || songs.neutral;
+            
+            document.getElementById('detected-emotion').textContent = emotion.charAt(0).toUpperCase() + emotion.slice(1);
+            
+            const songsContainer = document.getElementById('songs-container');
+            songsContainer.innerHTML = '';
+            
+            // Shuffle and pick 3 random songs
+            const shuffled = emotionSongs.sort(() => 0.5 - Math.random());
+            const selectedSongs = shuffled.slice(0, 3);
+            
+            selectedSongs.forEach((song, index) => {
+                setTimeout(() => {
+                    const songCard = document.createElement('div');
+                    songCard.className = 'song-card';
+                    songCard.innerHTML = `
+                        <h3>${song.name}</h3>
+                        <p>by ${song.artist}</p>
+                        <a href="${song.link}" target="_blank" class="spotify-btn">▶ Play on Spotify</a>
+                    `;
+                    songsContainer.appendChild(songCard);
+                }, index * 200);
+            });
+            
+            document.getElementById('results').classList.add('show');
+        }
+
+        function showLoading() {
+            document.getElementById('loading').classList.add('show');
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').classList.remove('show');
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.classList.add('show');
+            setTimeout(() => errorDiv.classList.remove('show'), 5000);
+        }
+
+        function hideResults() {
+            document.getElementById('results').classList.remove('show');
+        }
+
+        // Clean up camera on page unload
+        window.addEventListener('beforeunload', () => {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+        });
+    </script>
+</body>
+</html>
