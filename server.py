@@ -23,7 +23,11 @@ from deepface import DeepFace
 import cv2
 import base64
 import numpy as np
+import gc
 
+# Force garbage collection periodically
+def cleanup_memory():
+    gc.collect()
 app = Flask(__name__)
 
 # Enable CORS - Allow all origins
@@ -184,67 +188,67 @@ def webcam_emotion():
                 img_data += '=' * (4 - missing_padding)
             
             img_bytes = base64.b64decode(img_data)
-            np_img = np.frombuffer(img_bytes, np.uint8)
-            img = cv2.imdecode(np_img, cv2.IMREAD_COLOR)
+            nparr = np.frombuffer(img_bytes, np.uint8)
+            img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
             
             if img is None:
                 return jsonify({"error": "Failed to decode image"}), 400
             
-            # Resize image to reduce memory usage (max 640x480)
+            # Resize to smaller dimensions for faster processing
             height, width = img.shape[:2]
-            max_dimension = 640
+            max_size = 480
             
-            if width > max_dimension or height > max_dimension:
-                scale = max_dimension / max(width, height)
+            if width > max_size or height > max_size:
+                scale = max_size / max(width, height)
                 new_width = int(width * scale)
                 new_height = int(height * scale)
-                img = cv2.resize(img, (new_width, new_height), interpolation=cv2.INTER_AREA)
-                print(f"[WEBCAM] Resized image to {new_width}x{new_height}", file=sys.stderr)
+                img = cv2.resize(img, (new_width, new_height))
+                print(f"[WEBCAM] Resized to {new_width}x{new_height}", file=sys.stderr)
                 
         except Exception as e:
-            print(f"[WEBCAM] Image decode error: {str(e)}", file=sys.stderr)
-            return jsonify({"error": "Invalid image data format"}), 400
-
+            print(f"[WEBCAM] Decode error: {str(e)}", file=sys.stderr)
+            return jsonify({"error": f"Image decode failed: {str(e)}"}), 400
         # Analyze facial emotion using DeepFace
         try:
             result = DeepFace.analyze(
                 img_path=img, 
                 actions=['emotion'], 
                 enforce_detection=False,
+                detector_backend='opencv',
                 silent=True
             )
             
             # Handle both list and dict responses
             if isinstance(result, list):
                 dominant = result[0]['dominant_emotion']
-                emotions = result[0]['emotion']
             else:
                 dominant = result['dominant_emotion']
-                emotions = result['emotion']
             
-            # Clean up memory
-            del img
-            del np_img
-            del img_bytes
+            # Clean up memory immediately
+            del img, nparr, img_bytes
             
             return jsonify({
                 "emotion": dominant,
-                "all_emotions": emotions,
                 "method": "deepface"
             }), 200
             
         except Exception as e:
-            print(f"[WEBCAM] DeepFace analysis error: {str(e)}", file=sys.stderr)
-            # Clean up memory even on error
-            del img
-            del np_img
-            del img_bytes
+            print(f"[WEBCAM] DeepFace error: {str(e)}", file=sys.stderr)
             
-            # Fallback to neutral if face detection fails
+           # Clean up memory
+            try:
+                del img, nparr, img_bytes
+            except:
+                pass
+            
+            gc.collect()  # Force garbage collection
+            
+            # Return neutral as fallback
             return jsonify({
                 "emotion": "neutral",
-                "warning": "Face detection uncertain, using neutral",
-                "method": "fallback"
+                "warning": "Face detection failed, using neutral",
+                "method": "fallback",
+                "error_detail": str(e)
             }), 200
     
     except Exception as e:

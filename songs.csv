@@ -1,66 +1,122 @@
-emotion,song_name,artist,link
+emotion,name,artist,link
 happy,Can't Stop the Feeling!,Justin Timberlake,https://open.spotify.com/track/6JV2JOEocMgcZxYSZelKcc
 happy,Happy,Pharrell Williams,https://open.spotify.com/track/60nZcImufyMA1MKQY3dcCH
 happy,Good as Hell,Lizzo,https://open.spotify.com/track/6KgBpzTuTRPebChN0VTyzV
 happy,Walking on Sunshine,Katrina and the Waves,https://open.spotify.com/track/05wIrZSwuaVWhcv5FfqeH0
 happy,Don't Stop Me Now,Queen,https://open.spotify.com/track/7hQJA50XrCWABAu5v6QZ4i
-happy,Lovely Day,Bill Withers,https://open.spotify.com/track/5EWPGh7jbTNO2wakv8LjUI
-happy,Three Little Birds,Bob Marley,https://open.spotify.com/track/2RlgNHKcydI9sayD2Df2xp
-happy,I Got You (I Feel Good),James Brown,https://open.spotify.com/track/2c6OvCZ5JmJqpADQP9kPJM
+happy,Best Day of My Life,American Authors,https://open.spotify.com/track/07LWHutTyawDlog00AAqlP
+happy,Three Little Birds,Bob Marley,https://open.spotify.com/track/2JvWY5l8EwW2P0aLSk2syE
+happy,I Got You (I Feel Good),James Brown,https://open.spotify.com/track/0GjEhVFGZW8afUYGChu3Rr
+happy,Dancing Queen,ABBA,https://open.spotify.com/track/0GjEhVFGZW8afUYGChu3Rr
+happy,Mr. Blue Sky,Electric Light Orchestra,https://open.spotify.com/track/2RlgNHKcydI9sayD2Df2xp
+happy,I'm a Believer,The Monkees,https://open.spotify.com/track/3G4WIWARqBpmH5KLFzw3tT
+happy,Good Life,OneRepublic,https://open.spotify.com/track/5Qv2Nby1xTr9pQyjkrc94J
+happy,Shake It Off,Taylor Swift,https://open.spotify.com/track/0cqRj7pUJDkTCEsJkx8snD
+happy,Roar,Katy Perry,https://open.spotify.com/track/6rzJZaO6PPIQ6W8uucEGhw
+happy,Don't Worry Be Happy,Bobby McFerrin,https://open.spotify.com/track/5K4W6rqBFWDnAN6FQUkS6x
 joy,Good Vibrations,The Beach Boys,https://open.spotify.com/track/54RhcBw2hOdFaDmFJQAWAL
 joy,Celebration,Kool & The Gang,https://open.spotify.com/track/1KOwMumaYuiUZtsKx6yuLs
 joy,September,Earth Wind & Fire,https://open.spotify.com/track/5nNmj1cLQ3EiYPYfeIhFEC
-joy,Best Day of My Life,American Authors,https://open.spotify.com/track/6qspW4YKycviw0GCaBgv5l
 joy,Uptown Funk,Bruno Mars,https://open.spotify.com/track/32OlwWuMpZ6b0aN2RZOeMS
-joy,Shake It Off,Taylor Swift,https://open.spotify.com/track/0cqRj7pUJDkTCEsJkx8snD
-joy,I Gotta Feeling,The Black Eyed Peas,https://open.spotify.com/track/4v0tapCyBcdyEbIpd1zZGq
+joy,I Wanna Dance with Somebody,Whitney Houston,https://open.spotify.com/track/2tUBqZG2AbRi7Q0BIrVrEj
+joy,Lovely Day,Bill Withers,https://open.spotify.com/track/5F4yNEMDAo0wxlJYlEj4Gk
+joy,Dynamite,BTS,https://open.spotify.com/track/0t1kP63rueHleOhQkYSXFY
+joy,Sugar,Maroon 5,https://open.spotify.com/track/1Cv1YLb4q0RzL6pybtaMLo
+joy,Happy Together,The Turtles,https://open.spotify.com/track/3BxtEogB74SUwF3u0GEfKI
+joy,Sing,Ed Sheeran,https://open.spotify.com/track/4IWZsfEkaK49itBwCTFDXQ
 sad,Someone Like You,Adele,https://open.spotify.com/track/4kflIGfjdZJWvEiqrxPZcW
 sad,Fix You,Coldplay,https://open.spotify.com/track/7LVHVU3tWfcxj5aiPFEW4Q
 sad,Let Her Go,Passenger,https://open.spotify.com/track/2jG8XJ0AahBf1I3WX5Jr9A
-sad,The Night We Met,Lord Huron,https://open.spotify.com/track/3KkXRkHbMCARz0aVfEt68P
-sad,Say Something,A Great Big World,https://open.spotify.com/track/4yL0vYgzBgMCgJc3gq7eul
-sad,Hurt,Johnny Cash,https://open.spotify.com/track/41L3O37CECZt3N7ziG2z7l
-sad,When I Was Your Man,Bruno Mars,https://open.spotify.com/track/6J6AuUDuCYznQYTBEVCQUq
 sad,Someone You Loved,Lewis Capaldi,https://open.spotify.com/track/7qEHsqek33rTcFNT9PFqLf
-sad,Tears in Heaven,Eric Clapton,https://open.spotify.com/track/4y6FA6VsNPwLUCHUfTMBcG
+sad,When I Was Your Man,Bruno Mars,https://open.spotify.com/track/0nJW01T7XtvILxQgC5J7Wh
+sad,The Night We Met,Lord Huron,https://open.spotify.com/track/0NdZpfNPFa0dHPVYJupK5e
+sad,Say Something,A Great Big World,https://open.spotify.com/track/7rXJv3FxvCRAGrIrLgLydT
+sad,Jealous,Labrinth,https://open.spotify.com/track/5WQ6jjkJxdoJGhILdOk9Cr
+sad,Dancing On My Own,Calum Scott,https://open.spotify.com/track/3oU8e49dJv5t7MhGAGvmVH
+sad,Everybody Hurts,R.E.M.,https://open.spotify.com/track/6PypGyiu0Y2lCDBN1XZEnP
+sad,Nothing Compares 2 U,Sinead O'Connor,https://open.spotify.com/track/53LRbfMGJyTdTJgDYVG8tZ
+sad,Back to Black,Amy Winehouse,https://open.spotify.com/track/30OToVNwm93cGy6vxGUgxR
+sad,Gravity,John Mayer,https://open.spotify.com/track/3YnCXZwGXNW08Ui0SZqDHb
+sad,Wake Me Up When September Ends,Green Day,https://open.spotify.com/track/3ZffCQKLFLUvYM59XKLbVm
+sad,Yesterday,The Beatles,https://open.spotify.com/track/3BQHpFgAp4l80e1XslIjNI
 sadness,All Too Well,Taylor Swift,https://open.spotify.com/track/5enxwA8aAbwZbf5qCHORXi
 sadness,Skinny Love,Bon Iver,https://open.spotify.com/track/01XJvvERP0JfHKLbEaFXmW
 sadness,Mad World,Gary Jules,https://open.spotify.com/track/3JOVTQ5h8HGFnDdp4VT3MP
 sadness,The Scientist,Coldplay,https://open.spotify.com/track/75JFxkI2RXiU7L9VXzMkle
+sadness,Hurt,Johnny Cash,https://open.spotify.com/track/2mZa9pP8FyVDQ5Zf9CpNsb
+sadness,Tears in Heaven,Eric Clapton,https://open.spotify.com/track/4IHwJq35OCZlmNEH8LFmgX
+sadness,Creep,Radiohead,https://open.spotify.com/track/70LcF31zb1H0PyJoS1Sx1r
+sadness,Black,Pearl Jam,https://open.spotify.com/track/6FTBbVSZhV60LSkVxFk3kN
+sadness,Hallelujah,Jeff Buckley,https://open.spotify.com/track/3pJQdc1PNAKbMFMNajJ2iu
+sadness,Everybody's Gotta Learn Sometime,The Korgis,https://open.spotify.com/track/1KP3Wlv4UWMF8jU7fB6ePc
 angry,In the End,Linkin Park,https://open.spotify.com/track/60a0Rd6pjrkxjPbaKzXjfq
 angry,Lose Yourself,Eminem,https://open.spotify.com/track/2GZbaAvmQk6xZ8Wv9zjYxO
 angry,Killing In The Name,Rage Against The Machine,https://open.spotify.com/track/1jvApR4mAsGqqsMP5n5z7v
-angry,Break Stuff,Limp Bizkit,https://open.spotify.com/track/6J4HGQKZM1rqDR8IXWfgzE
-angry,Bodies,Drowning Pool,https://open.spotify.com/track/4uF1y9fP3OWGZWpzKEMNXe
-angry,Du Hast,Rammstein,https://open.spotify.com/track/0xgCTiPicCb2XXfVhdCrPJ
+angry,Break Stuff,Limp Bizkit,https://open.spotify.com/track/3kxfsdsCpFgN412fpnW85Y
+angry,Breath,Breaking Benjamin,https://open.spotify.com/track/6a4T1OOGfWBEPr8PkIGsq3
+angry,Down with the Sickness,Disturbed,https://open.spotify.com/track/1IIgpkfFxiHY3xB9Rks7Jt
+angry,Bodies,Drowning Pool,https://open.spotify.com/track/0JUjmkWZqp4LKxr7xwfMpx
+angry,One Step Closer,Linkin Park,https://open.spotify.com/track/2nLtzopw4rPReszdYBJU6h
+angry,The Way I Am,Eminem,https://open.spotify.com/track/1dBXYB00F1BBbvMXDJ0DWJ
+angry,Bulls on Parade,Rage Against The Machine,https://open.spotify.com/track/1HNE2PX70ztbEl0VojPogS
+angry,Freak on a Leash,Korn,https://open.spotify.com/track/0gp6AAhSmBMhlkPd0Tw7Xp
+angry,Wait and Bleed,Slipknot,https://open.spotify.com/track/6UPBE7Hf5vHmRKrq5V7p4L
 anger,Seven Nation Army,The White Stripes,https://open.spotify.com/track/3dPQuX8Gs42Y7b454ybpMR
 anger,Smells Like Teen Spirit,Nirvana,https://open.spotify.com/track/4CeeEOM32jQcH3eN9Q2dGj
 anger,Chop Suey!,System of a Down,https://open.spotify.com/track/2DlHlPMa4M17kufBvI2lEN
+anger,The Beautiful People,Marilyn Manson,https://open.spotify.com/track/6mhLzB8INcGMW8dkDRFgR2
+anger,Last Resort,Papa Roach,https://open.spotify.com/track/6OzCUfCwArEILHkHk17fAl
+anger,Break Stuff,Limp Bizkit,https://open.spotify.com/track/3kxfsdsCpFgN412fpnW85Y
+anger,Given Up,Linkin Park,https://open.spotify.com/track/5x6z1w3cTcULJvострой1M
+anger,Duality,Slipknot,https://open.spotify.com/track/3TAVvOWJJWZuScTN4GBPCp
 fear,Demons,Imagine Dragons,https://open.spotify.com/track/5qaEfEh1AtSdrdrByCP7qR
 fear,Bury a Friend,Billie Eilish,https://open.spotify.com/track/4SSnFejRGlZikf02HLewEF
-fear,Breathe Me,Sia,https://open.spotify.com/track/6YYwGPKaYeq5WQ0hxrjZe8
 fear,Radioactive,Imagine Dragons,https://open.spotify.com/track/0C7zgv0rBkG7p1DYv9nEcD
+fear,Stressed Out,Twenty One Pilots,https://open.spotify.com/track/3CRDbSIZ4r5MsZ0YwxuEkn
+fear,Boulevard of Broken Dreams,Green Day,https://open.spotify.com/track/4f3iNDYnFBeAzjEgLmFyDi
 fear,Numb,Linkin Park,https://open.spotify.com/track/2nLtzopw4rPReszdYBJU6h
-fear,Paranoid,Black Sabbath,https://open.spotify.com/track/6NKqb5pLqQHIrzkSfnxHh3
+fear,Ride,Twenty One Pilots,https://open.spotify.com/track/2Z8WuEywRWYTKe1NybPQEW
+fear,Crawling,Linkin Park,https://open.spotify.com/track/1nTn0tWYmo5VNYUYsBQmj9
+fear,My Immortal,Evanescence,https://open.spotify.com/track/0mNzlzJMtN58XFLPdPzIUf
+fear,Breathe Me,Sia,https://open.spotify.com/track/4ZSXkRejvgBmrU2FkmYwSo
 surprise,Firework,Katy Perry,https://open.spotify.com/track/4lCv7b86sLynZbXhfScfm2
 surprise,Wake Me Up,Avicii,https://open.spotify.com/track/1y4eb6hmAvsqlDOl3fx9kk
 surprise,On Top of the World,Imagine Dragons,https://open.spotify.com/track/68Dni7IE4VyPkTOH9mRWHr
-surprise,Can't Hold Us,Macklemore,https://open.spotify.com/track/3bidbhpOYeV4knp8AIu8Xn
-surprise,Hall of Fame,The Script,https://open.spotify.com/track/4IWZsfEkaK49itBwCTFDXQ
+surprise,Pumped Up Kicks,Foster the People,https://open.spotify.com/track/7w87IxuO7BDcJ3YUqCyMTT
+surprise,Electric Feel,MGMT,https://open.spotify.com/track/5rJVTTK0qi6yPZVIZjEszT
+surprise,Feel It Still,Portugal. The Man,https://open.spotify.com/track/6VzvAWJI98dQpzhosbXZU6
+surprise,Rather Be,Clean Bandit,https://open.spotify.com/track/6Oq8mWzMhzMBtbbMdZOJqw
+surprise,titanium,David Guetta ft. Sia,https://open.spotify.com/track/0lYBIQnvVQa6Mix90NfBHx
 disgust,Bad Guy,Billie Eilish,https://open.spotify.com/track/2Fxmhks0bxGSBdJ92vM42m
 disgust,Heathens,Twenty One Pilots,https://open.spotify.com/track/6i0V12jOa3mr6uu4WYhUBr
-disgust,Criminal,Britney Spears,https://open.spotify.com/track/1cHZfWz3G1o2QdKq4ohpZw
 disgust,Toxic,Britney Spears,https://open.spotify.com/track/717TY4sfgObJWiGMVURAVb
+disgust,Sick Boy,The Chainsmokers,https://open.spotify.com/track/1NYCGCJgQ09RHE8fZhc7Kb
+disgust,No Scrubs,TLC,https://open.spotify.com/track/4BEd0YZYGAEW8gO33CmrNY
+disgust,You Oughta Know,Alanis Morissette,https://open.spotify.com/track/6F5c58TMEs1Pf42NrWHDwD
+disgust,Before He Cheats,Carrie Underwood,https://open.spotify.com/track/7mWr6CjrzJiYgvcPSpSwUI
 neutral,Blinding Lights,The Weeknd,https://open.spotify.com/track/0VjIjW4GlUZAMYd2vXMi3b
-neutral,Sunflower,Post Malone,https://open.spotify.com/track/3KkXRkHbMCARz0aVfEt68P
-neutral,Perfect,Ed Sheeran,https://open.spotify.com/track/0tgVpDi06FyKpA1z0VMD4v
 neutral,Levitating,Dua Lipa,https://open.spotify.com/track/463CkQjx2Zk1yXoBuierM9
 neutral,Watermelon Sugar,Harry Styles,https://open.spotify.com/track/6UelLqGlWMcVH1E5c4H7lY
+neutral,Circles,Post Malone,https://open.spotify.com/track/21jGcNKet2qwijlDFuPiPb
+neutral,The Less I Know the Better,Tame Impala,https://open.spotify.com/track/6K4t31amVTZDgR3sKmwUJJ
+neutral,Starboy,The Weeknd,https://open.spotify.com/track/5aAx2yezTd8zXrkmtKl66Z
+neutral,Heat Waves,Glass Animals,https://open.spotify.com/track/02MWAaffLxlfxAUY7c5dvx
+neutral,Peaches,Justin Bieber,https://open.spotify.com/track/4iJyoBOLtHqaGxP12qzhQI
+neutral,drivers license,Olivia Rodrigo,https://open.spotify.com/track/7lPN2DXiMsVn7XUKtOW1CS
+neutral,Stay,The Kid LAROI & Justin Bieber,https://open.spotify.com/track/5HCyWlXZPP0y6Gqq8TgA20
+neutral,good 4 u,Olivia Rodrigo,https://open.spotify.com/track/4ZtFanR9U6ndgddUvNcjcG
 love,Perfect,Ed Sheeran,https://open.spotify.com/track/0tgVpDi06FyKpA1z0VMD4v
-love,Thinking Out Loud,Ed Sheeran,https://open.spotify.com/track/4J8b92rGnSmvCTEEHxFhsx
 love,All of Me,John Legend,https://open.spotify.com/track/3U4isOIWM3VvDubwSI3y7a
-love,Make You Feel My Love,Adele,https://open.spotify.com/track/0put0knkXf7lDmWh0VFpHN
-love,Can't Help Falling in Love,Elvis Presley,https://open.spotify.com/track/3NT0oPASWKHPqMM8OwR0tP
 love,A Thousand Years,Christina Perri,https://open.spotify.com/track/6qSpB4XlWNGhhGQRXGb2F3
-love,Just the Way You Are,Bruno Mars,https://open.spotify.com/track/4JehYebiI9JE8sR8MisGVb
-love,I Don't Want to Miss a Thing,Aerosmith,https://open.spotify.com/track/2LiYdJZRWt0wPGe77SO4ZL
+love,Thinking Out Loud,Ed Sheeran,https://open.spotify.com/track/2lzEz3A3XIRyhBXeSsSW7p
+love,Just the Way You Are,Bruno Mars,https://open.spotify.com/track/7BqBn9nzAq8spo5e7cZ0dJ
+love,Make You Feel My Love,Adele,https://open.spotify.com/track/37P2Z63dsXj8CFlYr0pOCW
+love,At Last,Etta James,https://open.spotify.com/track/4J74pl4SDkEQj9DRJwPsJZ
+love,Can't Help Falling in Love,Elvis Presley,https://open.spotify.com/track/44AyOl4qVkzS48vBsbNXaC
+love,Your Song,Elton John,https://open.spotify.com/track/3SdTKo2uVsxFblQjpScoHy
+love,Unchained Melody,The Righteous Brothers,https://open.spotify.com/track/3WMj8moIAXJhHsyLaqIIHI
+love,Wonderful Tonight,Eric Clapton,https://open.spotify.com/track/3H7ihDc1cqMDIRagQnViJR
+love,Endless Love,Diana Ross & Lionel Richie,https://open.spotify.com/track/6H4RJBWhJVzLxXXX7aqz1L
+love,I Don't Want to Miss a Thing,Aerosmith,https://open.spotify.com/track/3QGsuHI8jO1Rx4JWLUh9jd
+love,From This Moment On,Shania Twain,https://open.spotify.com/track/67yLQRJ7bQhZs0b9HyZWnv
+love,Marry You,Bruno Mars,https://open.spotify.com/track/3a1lNhkSLSkpJE4MSHpDu9

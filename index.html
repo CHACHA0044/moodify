@@ -416,7 +416,41 @@ let cameraStarted = false;
 let serverAwake = false;
 let capturedPhotoData = null;
 
-const songs = {
+let songs = {}; // Will be loaded from CSV
+
+// Load songs from CSV file
+async function loadSongsFromCSV() {
+    try {
+        const response = await fetch('songs.csv');
+        const csvText = await response.text();
+        
+        // Parse CSV
+        const lines = csvText.split('\n').slice(1); // Skip header
+        songs = {};
+        
+        lines.forEach(line => {
+            if (!line.trim()) return;
+            
+            const parts = line.split(',');
+            if (parts.length < 4) return;
+            
+            const emotion = parts[0].trim();
+            const name = parts[1].trim();
+            const artist = parts[2].trim();
+            const link = parts.slice(3).join(',').trim(); // Handle commas in URLs
+            
+            if (!songs[emotion]) {
+                songs[emotion] = [];
+            }
+            
+            songs[emotion].push({ name, artist, link });
+        });
+        
+        console.log('✅ Loaded songs from CSV:', Object.keys(songs).length, 'emotions');
+    } catch (err) {
+        console.error('❌ Failed to load CSV, using fallback songs:', err);
+        // Fallback to minimal songs if CSV fails
+        songs = {
     happy: [
         {name: "Can't Stop the Feeling!", artist: "Justin Timberlake", link: "https://open.spotify.com/track/6JV2JOEocMgcZxYSZelKcc"},
         {name: "Happy", artist: "Pharrell Williams", link: "https://open.spotify.com/track/60nZcImufyMA1MKQY3dcCH"},
@@ -515,6 +549,9 @@ const songs = {
         {name: "Can't Help Falling in Love", artist: "Elvis Presley", link: "https://open.spotify.com/track/44AyOl4qVkzS48vBsbNXaC"}
     ]
 };
+    }
+}
+
 // Wake up the server when page loads
 async function wakeUpServer() {
     console.log('🔄 Waking up server...');
@@ -614,7 +651,6 @@ function stopCamera() {
 }
 
 function showPhotoPreview(imageData) {
-    // Show captured photo in place of video
     const video = document.getElementById('video');
     const overlay = document.getElementById('camera-overlay');
     
@@ -651,8 +687,8 @@ async function captureEmotion() {
     const canvas = document.createElement('canvas');
     
     // Use smaller resolution for faster processing and less memory
-    const maxWidth = 640;
-    const maxHeight = 480;
+    const maxWidth = 480;
+    const maxHeight = 360;
     canvas.width = Math.min(video.videoWidth, maxWidth);
     canvas.height = Math.min(video.videoHeight, maxHeight);
     
@@ -663,8 +699,8 @@ async function captureEmotion() {
     ctx.scale(-1, 1);
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     
-    // Lower quality for faster upload and less memory
-    const imageData = canvas.toDataURL('image/jpeg', 0.6);
+    // Lower quality for faster upload and less memory (40%)
+    const imageData = canvas.toDataURL('image/jpeg', 0.4);
     capturedPhotoData = imageData;
     
     // Show photo preview
@@ -687,7 +723,7 @@ async function captureEmotion() {
         }
         
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 45000); // 45 second timeout
+        const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
         
         const response = await fetch(`${API_URL}/webcam`, {
             method: 'POST',
@@ -704,9 +740,19 @@ async function captureEmotion() {
         // Clear image data from memory
         capturedPhotoData = null;
         
+        // Check response status
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.error || `Server error: ${response.status}`);
+            const errorText = await response.text();
+            console.error('Server response:', response.status, errorText);
+            
+            let errorData;
+            try {
+                errorData = JSON.parse(errorText);
+            } catch {
+                errorData = { error: `Server error ${response.status}` };
+            }
+            
+            throw new Error(errorData.error || errorData.details || `Server returned ${response.status}`);
         }
         
         const data = await response.json();
@@ -728,11 +774,11 @@ async function captureEmotion() {
         capturedPhotoData = null;
         
         if (err.name === 'AbortError') {
-            showError('Request timed out. The server might be waking up. Please try again in a moment.');
-        } else if (err.message.includes('Failed to fetch')) {
-            showError('Cannot connect to server. Please check your internet connection.');
+            showError('Request timed out. Server is starting up. Please wait 30 seconds and try again.');
+        } else if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+            showError('Cannot connect to server. Please check your internet connection or try again later.');
         } else {
-            showError('Error: ' + err.message);
+            showError('Error: ' + err.message + '. Please try again.');
         }
     } finally {
         hideLoading();
@@ -859,10 +905,12 @@ window.addEventListener('beforeunload', () => {
     capturedPhotoData = null;
 });
 
-// Wake up server when page loads
+// Load songs CSV when page loads
 window.addEventListener('DOMContentLoaded', () => {
     console.log('🎵 Moodify loaded');
-    wakeUpServer();
+    loadSongsFromCSV().then(() => {
+        wakeUpServer();
+    });
 });
     </script>
 </body>
