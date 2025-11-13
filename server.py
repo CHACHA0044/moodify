@@ -29,12 +29,10 @@ app = Flask(__name__)
 # Enable CORS - Allow all origins
 CORS(app, resources={
     r"/*": {
-        "origins": "*",
-        "methods": ["GET", "POST", "OPTIONS", "HEAD"],
-        "allow_headers": ["Content-Type", "Authorization", "Accept"],
-        "expose_headers": ["Content-Type"],
-        "supports_credentials": False,
-        "max_age": 3600
+        "origins": ["*"],
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Accept"],
+        "supports_credentials": False
     }
 })
 
@@ -176,16 +174,21 @@ def webcam_emotion():
 
         # Decode Base64 image with reduced quality
         try:
-            # Handle data URL format (data:image/jpeg;base64,...)
+            # Handle data URL format
             if ',' in img_data:
                 img_data = img_data.split(',')[1]
+            
+            # Add padding if needed
+            missing_padding = len(img_data) % 4
+            if missing_padding:
+                img_data += '=' * (4 - missing_padding)
             
             img_bytes = base64.b64decode(img_data)
             np_img = np.frombuffer(img_bytes, np.uint8)
             img = cv2.imdecode(np_img, cv2.IMREAD_COLOR)
             
             if img is None:
-                return jsonify({"error": "Failed to decode image. Invalid image format."}), 400
+                return jsonify({"error": "Failed to decode image"}), 400
             
             # Resize image to reduce memory usage (max 640x480)
             height, width = img.shape[:2]
