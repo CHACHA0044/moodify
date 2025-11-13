@@ -2,6 +2,9 @@ import os
 import warnings
 import logging
 import sys
+from threading import Thread
+import time
+import requests
 
 # Suppress TensorFlow and other unnecessary logs
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
@@ -72,6 +75,28 @@ def detect_text_emotion(text):
         return detected
     
     return 'neutral'
+
+# Self-ping function to keep server awake
+def keep_alive():
+    """Ping the server every 3 minutes to prevent Render from sleeping"""
+    time.sleep(60)  # Wait 1 minute after startup
+    
+    while True:
+        try:
+            # Get the Render URL from environment or use default
+            render_url = os.environ.get('RENDER_EXTERNAL_URL', 'https://moodify-r2p0.onrender.com')
+            
+            # Ping the health endpoint
+            response = requests.get(f'{render_url}/ping', timeout=10)
+            if response.status_code == 200:
+                print(f"[KEEP-ALIVE] ✓ Pinged at {time.strftime('%H:%M:%S')}", file=sys.stderr)
+            else:
+                print(f"[KEEP-ALIVE] ⚠ Ping returned {response.status_code}", file=sys.stderr)
+        except Exception as e:
+            print(f"[KEEP-ALIVE] ✗ Ping failed: {str(e)}", file=sys.stderr)
+        
+        # Wait 3 minutes before next ping
+        time.sleep(180)
 
 @app.route("/")
 def home():
@@ -149,7 +174,7 @@ def webcam_emotion():
         if not img_data:
             return jsonify({"error": "Image field is required"}), 400
 
-        # Decode Base64 image
+        # Decode Base64 image with reduced quality
         try:
             # Handle data URL format (data:image/jpeg;base64,...)
             if ',' in img_data:
@@ -161,6 +186,17 @@ def webcam_emotion():
             
             if img is None:
                 return jsonify({"error": "Failed to decode image. Invalid image format."}), 400
+            
+            # Resize image to reduce memory usage (max 640x480)
+            height, width = img.shape[:2]
+            max_dimension = 640
+            
+            if width > max_dimension or height > max_dimension:
+                scale = max_dimension / max(width, height)
+                new_width = int(width * scale)
+                new_height = int(height * scale)
+                img = cv2.resize(img, (new_width, new_height), interpolation=cv2.INTER_AREA)
+                print(f"[WEBCAM] Resized image to {new_width}x{new_height}", file=sys.stderr)
                 
         except Exception as e:
             print(f"[WEBCAM] Image decode error: {str(e)}", file=sys.stderr)
@@ -183,6 +219,11 @@ def webcam_emotion():
                 dominant = result['dominant_emotion']
                 emotions = result['emotion']
             
+            # Clean up memory
+            del img
+            del np_img
+            del img_bytes
+            
             return jsonify({
                 "emotion": dominant,
                 "all_emotions": emotions,
@@ -191,6 +232,11 @@ def webcam_emotion():
             
         except Exception as e:
             print(f"[WEBCAM] DeepFace analysis error: {str(e)}", file=sys.stderr)
+            # Clean up memory even on error
+            del img
+            del np_img
+            del img_bytes
+            
             # Fallback to neutral if face detection fails
             return jsonify({
                 "emotion": "neutral",
@@ -222,6 +268,11 @@ if __name__ == "__main__":
     print(f"🎵 Moodify API Server Started", file=sys.stderr)
     print(f"   Port: {port}", file=sys.stderr)
     print(f"   CORS: Enabled", file=sys.stderr)
+    print(f"   Keep-Alive: Active (3 min interval)", file=sys.stderr)
     print("=" * 60, file=sys.stderr)
+    
+    # Start keep-alive thread to prevent Render from sleeping
+    keep_alive_thread = Thread(target=keep_alive, daemon=True)
+    keep_alive_thread.start()
     
     app.run(host="0.0.0.0", port=port, debug=debug, threaded=True)
