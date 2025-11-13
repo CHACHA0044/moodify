@@ -1,14 +1,18 @@
 import os
 import warnings
 import logging
+import sys
 
 # Suppress TensorFlow and other unnecessary logs
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 warnings.filterwarnings("ignore", category=FutureWarning)
 warnings.filterwarnings("ignore", category=UserWarning)
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 logging.getLogger('tensorflow').setLevel(logging.ERROR)
 logging.getLogger('deepface').setLevel(logging.ERROR)
+logging.getLogger('werkzeug').setLevel(logging.ERROR)
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -19,14 +23,27 @@ import numpy as np
 
 app = Flask(__name__)
 
-# Enable CORS for all routes and origins
+# Enable CORS - Allow all origins
 CORS(app, resources={
     r"/*": {
         "origins": "*",
-        "methods": ["GET", "POST", "OPTIONS"],
-        "allow_headers": ["Content-Type"]
+        "methods": ["GET", "POST", "OPTIONS", "HEAD"],
+        "allow_headers": ["Content-Type", "Authorization", "Accept"],
+        "expose_headers": ["Content-Type"],
+        "supports_credentials": False,
+        "max_age": 3600
     }
 })
+
+# Add CORS headers to ALL responses
+@app.after_request
+def after_request(response):
+    origin = request.headers.get('Origin', '*')
+    response.headers['Access-Control-Allow-Origin'] = origin if origin != '*' else '*'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, Accept'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS, HEAD'
+    response.headers['Access-Control-Max-Age'] = '3600'
+    return response
 
 # Keyword-based emotion detection for text
 EMOTION_KEYWORDS = {
@@ -58,66 +75,153 @@ def detect_text_emotion(text):
 
 @app.route("/")
 def home():
-    return jsonify({"message": "Moodify API is running!", "status": "ok"})
+    return jsonify({
+        "message": "Moodify API is running!", 
+        "status": "ok",
+        "version": "1.0",
+        "endpoints": {
+            "ping": "/ping - GET - Wake up check",
+            "text": "/text - POST - Analyze emotion from text",
+            "webcam": "/webcam - POST - Analyze emotion from image"
+        }
+    }), 200
+
+@app.route("/ping", methods=["GET", "OPTIONS"])
+def ping():
+    """Lightweight endpoint to wake up the server"""
+    if request.method == "OPTIONS":
+        return '', 204
+    return jsonify({"status": "awake", "message": "Server is ready"}), 200
 
 @app.route("/text", methods=["POST", "OPTIONS"])
 def text_emotion():
-    # Handle preflight request
+    # Handle preflight OPTIONS request
     if request.method == "OPTIONS":
-        response = jsonify({"status": "ok"})
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
-        response.headers.add("Access-Control-Allow-Methods", "POST")
-        return response
+        return '', 204
     
     try:
+        # Get JSON data
+        if not request.is_json:
+            return jsonify({"error": "Content-Type must be application/json"}), 400
+            
         data = request.get_json()
-        text = data.get("text", "")
+        if not data:
+            return jsonify({"error": "No JSON data provided"}), 400
+            
+        text = data.get("text", "").strip()
         
         if not text:
-            return jsonify({"error": "Text not provided"}), 400
+            return jsonify({"error": "Text field is required"}), 400
         
+        # Detect emotion
         emotion = detect_text_emotion(text)
-        response = jsonify({"emotion": emotion, "score": 0.95})
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        return response
+        
+        return jsonify({
+            "emotion": emotion, 
+            "score": 0.95,
+            "method": "keyword-based"
+        }), 200
     
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        print(f"[TEXT] Error: {str(e)}", file=sys.stderr)
+        return jsonify({
+            "error": "Internal server error",
+            "details": str(e)
+        }), 500
 
 @app.route("/webcam", methods=["POST", "OPTIONS"])
 def webcam_emotion():
-    # Handle preflight request
+    # Handle preflight OPTIONS request
     if request.method == "OPTIONS":
-        response = jsonify({"status": "ok"})
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        response.headers.add("Access-Control-Allow-Headers", "Content-Type")
-        response.headers.add("Access-Control-Allow-Methods", "POST")
-        return response
+        return '', 204
     
     try:
+        # Get JSON data
+        if not request.is_json:
+            return jsonify({"error": "Content-Type must be application/json"}), 400
+            
         data = request.get_json()
+        if not data:
+            return jsonify({"error": "No JSON data provided"}), 400
+            
         img_data = data.get("image")
         
         if not img_data:
-            return jsonify({"error": "Image not provided"}), 400
+            return jsonify({"error": "Image field is required"}), 400
 
         # Decode Base64 image
-        img_bytes = base64.b64decode(img_data.split(',')[1])
-        np_img = np.frombuffer(img_bytes, np.uint8)
-        img = cv2.imdecode(np_img, cv2.IMREAD_COLOR)
+        try:
+            # Handle data URL format (data:image/jpeg;base64,...)
+            if ',' in img_data:
+                img_data = img_data.split(',')[1]
+            
+            img_bytes = base64.b64decode(img_data)
+            np_img = np.frombuffer(img_bytes, np.uint8)
+            img = cv2.imdecode(np_img, cv2.IMREAD_COLOR)
+            
+            if img is None:
+                return jsonify({"error": "Failed to decode image. Invalid image format."}), 400
+                
+        except Exception as e:
+            print(f"[WEBCAM] Image decode error: {str(e)}", file=sys.stderr)
+            return jsonify({"error": "Invalid image data format"}), 400
 
         # Analyze facial emotion using DeepFace
-        result = DeepFace.analyze(img_path=img, actions=['emotion'], enforce_detection=False)
-        dominant = result[0]['dominant_emotion']
-        
-        response = jsonify({"emotion": dominant})
-        response.headers.add("Access-Control-Allow-Origin", "*")
-        return response
+        try:
+            result = DeepFace.analyze(
+                img_path=img, 
+                actions=['emotion'], 
+                enforce_detection=False,
+                silent=True
+            )
+            
+            # Handle both list and dict responses
+            if isinstance(result, list):
+                dominant = result[0]['dominant_emotion']
+                emotions = result[0]['emotion']
+            else:
+                dominant = result['dominant_emotion']
+                emotions = result['emotion']
+            
+            return jsonify({
+                "emotion": dominant,
+                "all_emotions": emotions,
+                "method": "deepface"
+            }), 200
+            
+        except Exception as e:
+            print(f"[WEBCAM] DeepFace analysis error: {str(e)}", file=sys.stderr)
+            # Fallback to neutral if face detection fails
+            return jsonify({
+                "emotion": "neutral",
+                "warning": "Face detection uncertain, using neutral",
+                "method": "fallback"
+            }), 200
     
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        print(f"[WEBCAM] General error: {str(e)}", file=sys.stderr)
+        return jsonify({
+            "error": "Internal server error",
+            "details": str(e)
+        }), 500
+
+# Error handlers
+@app.errorhandler(404)
+def not_found(error):
+    return jsonify({"error": "Endpoint not found"}), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    return jsonify({"error": "Internal server error"}), 500
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
-    app.run(host="0.0.0.0", port=port)
+    debug = os.environ.get("FLASK_DEBUG", "False").lower() == "true"
+    
+    print("=" * 60, file=sys.stderr)
+    print(f"🎵 Moodify API Server Started", file=sys.stderr)
+    print(f"   Port: {port}", file=sys.stderr)
+    print(f"   CORS: Enabled", file=sys.stderr)
+    print("=" * 60, file=sys.stderr)
+    
+    app.run(host="0.0.0.0", port=port, debug=debug, threaded=True)

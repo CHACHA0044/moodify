@@ -406,241 +406,376 @@
     </div>
 
     <script>
-        // const API_URL = 'http://localhost:8000'; // Change this to your deployed backend URL
-        const API_URL = 'https://moodify-r2p0.onrender.com';  // Your Render URL
-        let stream = null;
-        let cameraStarted = false;
+        // Complete JavaScript for Moodify
+// Replace the entire <script> section in your HTML with this code
 
-        const songs = {
-            happy: [
-                {name: "Can't Stop the Feeling!", artist: "Justin Timberlake", link: "https://open.spotify.com/track/6JV2JOEocMgcZxYSZelKcc"},
-                {name: "Happy", artist: "Pharrell Williams", link: "https://open.spotify.com/track/60nZcImufyMA1MKQY3dcCH"},
-                {name: "Good as Hell", artist: "Lizzo", link: "https://open.spotify.com/track/6KgBpzTuTRPebChN0VTyzV"},
-                {name: "Walking on Sunshine", artist: "Katrina and the Waves", link: "https://open.spotify.com/track/05wIrZSwuaVWhcv5FfqeH0"},
-                {name: "Don't Stop Me Now", artist: "Queen", link: "https://open.spotify.com/track/7hQJA50XrCWABAu5v6QZ4i"}
-            ],
-            joy: [
-                {name: "Good Vibrations", artist: "The Beach Boys", link: "https://open.spotify.com/track/54RhcBw2hOdFaDmFJQAWAL"},
-                {name: "Celebration", artist: "Kool & The Gang", link: "https://open.spotify.com/track/1KOwMumaYuiUZtsKx6yuLs"},
-                {name: "September", artist: "Earth Wind & Fire", link: "https://open.spotify.com/track/5nNmj1cLQ3EiYPYfeIhFEC"},
-                {name: "Uptown Funk", artist: "Bruno Mars", link: "https://open.spotify.com/track/32OlwWuMpZ6b0aN2RZOeMS"}
-            ],
-            sad: [
-                {name: "Someone Like You", artist: "Adele", link: "https://open.spotify.com/track/4kflIGfjdZJWvEiqrxPZcW"},
-                {name: "Fix You", artist: "Coldplay", link: "https://open.spotify.com/track/7LVHVU3tWfcxj5aiPFEW4Q"},
-                {name: "Let Her Go", artist: "Passenger", link: "https://open.spotify.com/track/2jG8XJ0AahBf1I3WX5Jr9A"},
-                {name: "Someone You Loved", artist: "Lewis Capaldi", link: "https://open.spotify.com/track/7qEHsqek33rTcFNT9PFqLf"}
-            ],
-            sadness: [
-                {name: "All Too Well", artist: "Taylor Swift", link: "https://open.spotify.com/track/5enxwA8aAbwZbf5qCHORXi"},
-                {name: "Skinny Love", artist: "Bon Iver", link: "https://open.spotify.com/track/01XJvvERP0JfHKLbEaFXmW"},
-                {name: "Mad World", artist: "Gary Jules", link: "https://open.spotify.com/track/3JOVTQ5h8HGFnDdp4VT3MP"}
-            ],
-            angry: [
-                {name: "In the End", artist: "Linkin Park", link: "https://open.spotify.com/track/60a0Rd6pjrkxjPbaKzXjfq"},
-                {name: "Lose Yourself", artist: "Eminem", link: "https://open.spotify.com/track/2GZbaAvmQk6xZ8Wv9zjYxO"},
-                {name: "Killing In The Name", artist: "Rage Against The Machine", link: "https://open.spotify.com/track/1jvApR4mAsGqqsMP5n5z7v"}
-            ],
-            anger: [
-                {name: "Seven Nation Army", artist: "The White Stripes", link: "https://open.spotify.com/track/3dPQuX8Gs42Y7b454ybpMR"},
-                {name: "Smells Like Teen Spirit", artist: "Nirvana", link: "https://open.spotify.com/track/4CeeEOM32jQcH3eN9Q2dGj"},
-                {name: "Chop Suey!", artist: "System of a Down", link: "https://open.spotify.com/track/2DlHlPMa4M17kufBvI2lEN"}
-            ],
-            fear: [
-                {name: "Demons", artist: "Imagine Dragons", link: "https://open.spotify.com/track/5qaEfEh1AtSdrdrByCP7qR"},
-                {name: "Bury a Friend", artist: "Billie Eilish", link: "https://open.spotify.com/track/4SSnFejRGlZikf02HLewEF"},
-                {name: "Radioactive", artist: "Imagine Dragons", link: "https://open.spotify.com/track/0C7zgv0rBkG7p1DYv9nEcD"}
-            ],
-            surprise: [
-                {name: "Firework", artist: "Katy Perry", link: "https://open.spotify.com/track/4lCv7b86sLynZbXhfScfm2"},
-                {name: "Wake Me Up", artist: "Avicii", link: "https://open.spotify.com/track/1y4eb6hmAvsqlDOl3fx9kk"},
-                {name: "On Top of the World", artist: "Imagine Dragons", link: "https://open.spotify.com/track/68Dni7IE4VyPkTOH9mRWHr"}
-            ],
-            disgust: [
-                {name: "Bad Guy", artist: "Billie Eilish", link: "https://open.spotify.com/track/2Fxmhks0bxGSBdJ92vM42m"},
-                {name: "Heathens", artist: "Twenty One Pilots", link: "https://open.spotify.com/track/6i0V12jOa3mr6uu4WYhUBr"},
-                {name: "Toxic", artist: "Britney Spears", link: "https://open.spotify.com/track/717TY4sfgObJWiGMVURAVb"}
-            ],
-            neutral: [
-                {name: "Blinding Lights", artist: "The Weeknd", link: "https://open.spotify.com/track/0VjIjW4GlUZAMYd2vXMi3b"},
-                {name: "Levitating", artist: "Dua Lipa", link: "https://open.spotify.com/track/463CkQjx2Zk1yXoBuierM9"},
-                {name: "Watermelon Sugar", artist: "Harry Styles", link: "https://open.spotify.com/track/6UelLqGlWMcVH1E5c4H7lY"}
-            ],
-            love: [
-                {name: "Perfect", artist: "Ed Sheeran", link: "https://open.spotify.com/track/0tgVpDi06FyKpA1z0VMD4v"},
-                {name: "All of Me", artist: "John Legend", link: "https://open.spotify.com/track/3U4isOIWM3VvDubwSI3y7a"},
-                {name: "A Thousand Years", artist: "Christina Perri", link: "https://open.spotify.com/track/6qSpB4XlWNGhhGQRXGb2F3"}
-            ]
-        };
+const API_URL = 'https://moodify-r2p0.onrender.com';
+let stream = null;
+let cameraStarted = false;
+let serverAwake = false;
 
-        function selectMode(mode) {
-            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.input-section').forEach(section => section.classList.remove('active'));
-            
-            if (mode === 'camera') {
-                document.getElementById('camera-section').classList.add('active');
-                event.target.classList.add('active');
-            } else {
-                document.getElementById('text-section').classList.add('active');
-                event.target.classList.add('active');
-            }
-            
-            hideResults();
-        }
+const songs = {
+    happy: [
+        {name: "Can't Stop the Feeling!", artist: "Justin Timberlake", link: "https://open.spotify.com/track/6JV2JOEocMgcZxYSZelKcc"},
+        {name: "Happy", artist: "Pharrell Williams", link: "https://open.spotify.com/track/60nZcImufyMA1MKQY3dcCH"},
+        {name: "Good as Hell", artist: "Lizzo", link: "https://open.spotify.com/track/6KgBpzTuTRPebChN0VTyzV"},
+        {name: "Walking on Sunshine", artist: "Katrina and the Waves", link: "https://open.spotify.com/track/05wIrZSwuaVWhcv5FfqeH0"},
+        {name: "Don't Stop Me Now", artist: "Queen", link: "https://open.spotify.com/track/7hQJA50XrCWABAu5v6QZ4i"}
+    ],
+    joy: [
+        {name: "Good Vibrations", artist: "The Beach Boys", link: "https://open.spotify.com/track/54RhcBw2hOdFaDmFJQAWAL"},
+        {name: "Celebration", artist: "Kool & The Gang", link: "https://open.spotify.com/track/1KOwMumaYuiUZtsKx6yuLs"},
+        {name: "September", artist: "Earth Wind & Fire", link: "https://open.spotify.com/track/5nNmj1cLQ3EiYPYfeIhFEC"},
+        {name: "Uptown Funk", artist: "Bruno Mars", link: "https://open.spotify.com/track/32OlwWuMpZ6b0aN2RZOeMS"}
+    ],
+    sad: [
+        {name: "Someone Like You", artist: "Adele", link: "https://open.spotify.com/track/4kflIGfjdZJWvEiqrxPZcW"},
+        {name: "Fix You", artist: "Coldplay", link: "https://open.spotify.com/track/7LVHVU3tWfcxj5aiPFEW4Q"},
+        {name: "Let Her Go", artist: "Passenger", link: "https://open.spotify.com/track/2jG8XJ0AahBf1I3WX5Jr9A"},
+        {name: "Someone You Loved", artist: "Lewis Capaldi", link: "https://open.spotify.com/track/7qEHsqek33rTcFNT9PFqLf"}
+    ],
+    sadness: [
+        {name: "All Too Well", artist: "Taylor Swift", link: "https://open.spotify.com/track/5enxwA8aAbwZbf5qCHORXi"},
+        {name: "Skinny Love", artist: "Bon Iver", link: "https://open.spotify.com/track/01XJvvERP0JfHKLbEaFXmW"},
+        {name: "Mad World", artist: "Gary Jules", link: "https://open.spotify.com/track/3JOVTQ5h8HGFnDdp4VT3MP"}
+    ],
+    angry: [
+        {name: "In the End", artist: "Linkin Park", link: "https://open.spotify.com/track/60a0Rd6pjrkxjPbaKzXjfq"},
+        {name: "Lose Yourself", artist: "Eminem", link: "https://open.spotify.com/track/2GZbaAvmQk6xZ8Wv9zjYxO"},
+        {name: "Killing In The Name", artist: "Rage Against The Machine", link: "https://open.spotify.com/track/1jvApR4mAsGqqsMP5n5z7v"}
+    ],
+    anger: [
+        {name: "Seven Nation Army", artist: "The White Stripes", link: "https://open.spotify.com/track/3dPQuX8Gs42Y7b454ybpMR"},
+        {name: "Smells Like Teen Spirit", artist: "Nirvana", link: "https://open.spotify.com/track/4CeeEOM32jQcH3eN9Q2dGj"},
+        {name: "Chop Suey!", artist: "System of a Down", link: "https://open.spotify.com/track/2DlHlPMa4M17kufBvI2lEN"}
+    ],
+    fear: [
+        {name: "Demons", artist: "Imagine Dragons", link: "https://open.spotify.com/track/5qaEfEh1AtSdrdrByCP7qR"},
+        {name: "Bury a Friend", artist: "Billie Eilish", link: "https://open.spotify.com/track/4SSnFejRGlZikf02HLewEF"},
+        {name: "Radioactive", artist: "Imagine Dragons", link: "https://open.spotify.com/track/0C7zgv0rBkG7p1DYv9nEcD"}
+    ],
+    surprise: [
+        {name: "Firework", artist: "Katy Perry", link: "https://open.spotify.com/track/4lCv7b86sLynZbXhfScfm2"},
+        {name: "Wake Me Up", artist: "Avicii", link: "https://open.spotify.com/track/1y4eb6hmAvsqlDOl3fx9kk"},
+        {name: "On Top of the World", artist: "Imagine Dragons", link: "https://open.spotify.com/track/68Dni7IE4VyPkTOH9mRWHr"}
+    ],
+    disgust: [
+        {name: "Bad Guy", artist: "Billie Eilish", link: "https://open.spotify.com/track/2Fxmhks0bxGSBdJ92vM42m"},
+        {name: "Heathens", artist: "Twenty One Pilots", link: "https://open.spotify.com/track/6i0V12jOa3mr6uu4WYhUBr"},
+        {name: "Toxic", artist: "Britney Spears", link: "https://open.spotify.com/track/717TY4sfgObJWiGMVURAVb"}
+    ],
+    neutral: [
+        {name: "Blinding Lights", artist: "The Weeknd", link: "https://open.spotify.com/track/0VjIjW4GlUZAMYd2vXMi3b"},
+        {name: "Levitating", artist: "Dua Lipa", link: "https://open.spotify.com/track/463CkQjx2Zk1yXoBuierM9"},
+        {name: "Watermelon Sugar", artist: "Harry Styles", link: "https://open.spotify.com/track/6UelLqGlWMcVH1E5c4H7lY"}
+    ],
+    love: [
+        {name: "Perfect", artist: "Ed Sheeran", link: "https://open.spotify.com/track/0tgVpDi06FyKpA1z0VMD4v"},
+        {name: "All of Me", artist: "John Legend", link: "https://open.spotify.com/track/3U4isOIWM3VvDubwSI3y7a"},
+        {name: "A Thousand Years", artist: "Christina Perri", link: "https://open.spotify.com/track/6qSpB4XlWNGhhGQRXGb2F3"}
+    ]
+};
 
-        async function startCamera() {
-            try {
-                stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { 
-                        facingMode: 'user',
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 }
-                    } 
-                });
-                
-                const video = document.getElementById('video');
-                video.srcObject = stream;
-                
-                // Flip the video horizontally for mirror effect
-                video.style.transform = 'scaleX(-1)';
-                
-                document.getElementById('camera-overlay').classList.add('hidden');
-                document.getElementById('capture-btn').disabled = false;
-                cameraStarted = true;
-            } catch (err) {
-                showError('Could not access camera. Please grant camera permissions.');
-                console.error(err);
-            }
-        }
-
-        async function captureEmotion() {
-            if (!cameraStarted) return;
-            
-            showLoading();
-            hideResults();
-            
-            const video = document.getElementById('video');
-            const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            const ctx = canvas.getContext('2d');
-            
-            // Flip back to original orientation for processing
-            ctx.translate(canvas.width, 0);
-            ctx.scale(-1, 1);
-            ctx.drawImage(video, 0, 0);
-            
-            const imageData = canvas.toDataURL('image/jpeg');
-            
-            try {
-                const response = await fetch(`${API_URL}/webcam`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ image: imageData })
-                });
-                
-                const data = await response.json();
-                
-                if (data.emotion) {
-                    displayResults(data.emotion);
-                } else {
-                    showError('Could not detect emotion. Please try again.');
-                }
-            } catch (err) {
-                showError('Server connection error. Make sure your Flask server is running on port 8000.');
-                console.error(err);
-            } finally {
-                hideLoading();
-            }
-        }
-
-        async function analyzeText() {
-            const text = document.getElementById('text-input').value.trim();
-            
-            if (!text) {
-                showError('Please enter some text describing how you feel.');
-                return;
-            }
-            
-            showLoading();
-            hideResults();
-            
-            try {
-                const response = await fetch(`${API_URL}/text`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text })
-                });
-                
-                const data = await response.json();
-                
-                if (data.emotion) {
-                    displayResults(data.emotion);
-                } else {
-                    showError('Could not analyze emotion. Please try again.');
-                }
-            } catch (err) {
-                showError('Server connection error. Make sure your Flask server is running on port 8000.');
-                console.error(err);
-            } finally {
-                hideLoading();
-            }
-        }
-
-        function displayResults(emotion) {
-            const emotionLower = emotion.toLowerCase();
-            const emotionSongs = songs[emotionLower] || songs.neutral;
-            
-            document.getElementById('detected-emotion').textContent = emotion.charAt(0).toUpperCase() + emotion.slice(1);
-            
-            const songsContainer = document.getElementById('songs-container');
-            songsContainer.innerHTML = '';
-            
-            // Shuffle and pick 3 random songs
-            const shuffled = emotionSongs.sort(() => 0.5 - Math.random());
-            const selectedSongs = shuffled.slice(0, 3);
-            
-            selectedSongs.forEach((song, index) => {
-                setTimeout(() => {
-                    const songCard = document.createElement('div');
-                    songCard.className = 'song-card';
-                    songCard.innerHTML = `
-                        <h3>${song.name}</h3>
-                        <p>by ${song.artist}</p>
-                        <a href="${song.link}" target="_blank" class="spotify-btn">▶ Play on Spotify</a>
-                    `;
-                    songsContainer.appendChild(songCard);
-                }, index * 200);
-            });
-            
-            document.getElementById('results').classList.add('show');
-        }
-
-        function showLoading() {
-            document.getElementById('loading').classList.add('show');
-        }
-
-        function hideLoading() {
-            document.getElementById('loading').classList.remove('show');
-        }
-
-        function showError(message) {
-            const errorDiv = document.getElementById('error');
-            errorDiv.textContent = message;
-            errorDiv.classList.add('show');
-            setTimeout(() => errorDiv.classList.remove('show'), 5000);
-        }
-
-        function hideResults() {
-            document.getElementById('results').classList.remove('show');
-        }
-
-        // Clean up camera on page unload
-        window.addEventListener('beforeunload', () => {
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
-            }
+// Wake up the server when page loads
+async function wakeUpServer() {
+    console.log('🔄 Waking up server...');
+    showLoading('Waking up server... This may take 30-60 seconds on first load.');
+    
+    try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
+        
+        const response = await fetch(`${API_URL}/ping`, {
+            method: 'GET',
+            signal: controller.signal
         });
+        
+        clearTimeout(timeoutId);
+        
+        if (response.ok) {
+            serverAwake = true;
+            console.log('✅ Server is awake and ready!');
+            hideLoading();
+        } else {
+            throw new Error('Server returned error status');
+        }
+    } catch (err) {
+        console.warn('⚠️ Server wake-up failed, will try again on first action:', err.message);
+        hideLoading();
+        // Don't show error yet - wait for user action
+    }
+}
+
+function selectMode(mode) {
+    // Stop camera when switching modes
+    stopCamera();
+    
+    document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.input-section').forEach(section => section.classList.remove('active'));
+    
+    if (mode === 'camera') {
+        document.getElementById('camera-section').classList.add('active');
+        event.target.classList.add('active');
+    } else {
+        document.getElementById('text-section').classList.add('active');
+        event.target.classList.add('active');
+    }
+    
+    hideResults();
+}
+
+async function startCamera() {
+    try {
+        console.log('📷 Starting camera...');
+        
+        stream = await navigator.mediaDevices.getUserMedia({ 
+            video: { 
+                facingMode: 'user',
+                width: { ideal: 1280 },
+                height: { ideal: 720 }
+            } 
+        });
+        
+        const video = document.getElementById('video');
+        video.srcObject = stream;
+        
+        // Flip the video horizontally for mirror effect
+        video.style.transform = 'scaleX(-1)';
+        
+        document.getElementById('camera-overlay').classList.add('hidden');
+        document.getElementById('capture-btn').disabled = false;
+        cameraStarted = true;
+        
+        console.log('✅ Camera started successfully');
+    } catch (err) {
+        showError('Could not access camera. Please grant camera permissions.');
+        console.error('❌ Camera error:', err);
+    }
+}
+
+function stopCamera() {
+    if (stream) {
+        stream.getTracks().forEach(track => {
+            track.stop();
+            console.log('🛑 Stopped camera track:', track.label);
+        });
+        stream = null;
+        
+        const video = document.getElementById('video');
+        video.srcObject = null;
+        
+        document.getElementById('camera-overlay').classList.remove('hidden');
+        document.getElementById('capture-btn').disabled = true;
+        cameraStarted = false;
+        
+        console.log('✅ Camera stopped');
+    }
+}
+
+async function captureEmotion() {
+    if (!cameraStarted) {
+        showError('Please start the camera first');
+        return;
+    }
+    
+    showLoading('Capturing and analyzing your emotion...');
+    hideResults();
+    
+    const video = document.getElementById('video');
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext('2d');
+    
+    // Flip back to original orientation for processing
+    ctx.translate(canvas.width, 0);
+    ctx.scale(-1, 1);
+    ctx.drawImage(video, 0, 0);
+    
+    // Reduce image quality for faster upload
+    const imageData = canvas.toDataURL('image/jpeg', 0.7);
+    
+    // STOP CAMERA IMMEDIATELY AFTER CAPTURE
+    stopCamera();
+    
+    console.log('📤 Sending image to server...');
+    
+    try {
+        // Check if server needs waking
+        if (!serverAwake) {
+            showLoading('Waking up server... This may take 30-60 seconds.');
+            await wakeUpServer();
+        }
+        
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 45000); // 45 second timeout
+        
+        const response = await fetch(`${API_URL}/webcam`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ image: imageData }),
+            signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.error || `Server error: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('✅ Emotion detected:', data);
+        
+        if (data.emotion) {
+            displayResults(data.emotion);
+            if (data.warning) {
+                console.warn('⚠️', data.warning);
+            }
+        } else {
+            showError('Could not detect emotion. Please try again.');
+        }
+    } catch (err) {
+        console.error('❌ Error:', err);
+        
+        if (err.name === 'AbortError') {
+            showError('Request timed out. The server might be waking up. Please try again in a moment.');
+        } else if (err.message.includes('Failed to fetch')) {
+            showError('Cannot connect to server. Please check your internet connection.');
+        } else {
+            showError('Error: ' + err.message);
+        }
+    } finally {
+        hideLoading();
+    }
+}
+
+async function analyzeText() {
+    const text = document.getElementById('text-input').value.trim();
+    
+    if (!text) {
+        showError('Please enter some text describing how you feel.');
+        return;
+    }
+    
+    showLoading('Analyzing your emotion...');
+    hideResults();
+    
+    console.log('📤 Sending text to server...');
+    
+    try {
+        // Check if server needs waking
+        if (!serverAwake) {
+            showLoading('Waking up server... This may take 30-60 seconds.');
+            await wakeUpServer();
+        }
+        
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+        
+        const response = await fetch(`${API_URL}/text`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ text }),
+            signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.error || `Server error: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('✅ Emotion detected:', data);
+        
+        if (data.emotion) {
+            displayResults(data.emotion);
+        } else {
+            showError('Could not analyze emotion. Please try again.');
+        }
+    } catch (err) {
+        console.error('❌ Error:', err);
+        
+        if (err.name === 'AbortError') {
+            showError('Request timed out. The server might be waking up. Please try again in a moment.');
+        } else if (err.message.includes('Failed to fetch')) {
+            showError('Cannot connect to server. Please check your internet connection.');
+        } else {
+            showError('Error: ' + err.message);
+        }
+    } finally {
+        hideLoading();
+    }
+}
+
+function displayResults(emotion) {
+    const emotionLower = emotion.toLowerCase();
+    const emotionSongs = songs[emotionLower] || songs.neutral;
+    
+    document.getElementById('detected-emotion').textContent = emotion.charAt(0).toUpperCase() + emotion.slice(1);
+    
+    const songsContainer = document.getElementById('songs-container');
+    songsContainer.innerHTML = '';
+    
+    // Shuffle and pick 3 random songs
+    const shuffled = [...emotionSongs].sort(() => 0.5 - Math.random());
+    const selectedSongs = shuffled.slice(0, 3);
+    
+    selectedSongs.forEach((song, index) => {
+        setTimeout(() => {
+            const songCard = document.createElement('div');
+            songCard.className = 'song-card';
+            songCard.innerHTML = `
+                <h3>${song.name}</h3>
+                <p>by ${song.artist}</p>
+                <a href="${song.link}" target="_blank" class="spotify-btn">▶ Play on Spotify</a>
+            `;
+            songsContainer.appendChild(songCard);
+        }, index * 200);
+    });
+    
+    document.getElementById('results').classList.add('show');
+}
+
+function showLoading(message = 'Analyzing your emotion...') {
+    const loadingDiv = document.getElementById('loading');
+    loadingDiv.querySelector('p').textContent = message;
+    loadingDiv.classList.add('show');
+}
+
+function hideLoading() {
+    document.getElementById('loading').classList.remove('show');
+}
+
+function showError(message) {
+    const errorDiv = document.getElementById('error');
+    errorDiv.textContent = message;
+    errorDiv.classList.add('show');
+    setTimeout(() => errorDiv.classList.remove('show'), 5000);
+}
+
+function hideResults() {
+    document.getElementById('results').classList.remove('show');
+}
+
+// Clean up camera on page unload
+window.addEventListener('beforeunload', () => {
+    stopCamera();
+});
+
+// Wake up server when page loads
+window.addEventListener('DOMContentLoaded', () => {
+    console.log('🎵 Moodify loaded');
+    wakeUpServer();
+});
     </script>
 </body>
 </html>
